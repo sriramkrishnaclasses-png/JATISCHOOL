@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
                  <input 
                    required
                    type="tel" 
-                   placeholder="Phone Number" 
+                   placeholder="9937033007" 
                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:bg-white transition"
                    value={enquiryForm.phone}
                    onChange={e => setEnquiryForm({...enquiryForm, phone: e.target.value})}

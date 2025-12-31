@@ -41,12 +41,12 @@ const Header: React.FC = () => {
 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-md">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-3">
-             <div className="bg-primary text-white p-2 rounded font-bold text-xl">JIS</div>
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+          <Link to="/" className="flex items-center gap-4">
+             <img src="/logo.png" alt="Jati International School Logo" className="h-12 w-auto object-contain" />
              <div>
-               <h1 className="text-xl md:text-2xl font-bold text-primary leading-tight">{settings.name}</h1>
-               <p className="text-xs text-gray-500 hidden md:block">{settings.tagline}</p>
+               <h1 className="text-xl md:text-2xl font-bold text-primary leading-tight tracking-tight">{settings.name}</h1>
+               <p className="text-[10px] md:text-xs text-gray-500 hidden md:block uppercase tracking-[0.2em] font-medium">{settings.tagline}</p>
              </div>
           </Link>
 
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
               <Link 
                 key={link.name} 
                 to={link.path}
-                className={`transition ${isActive(link.path) ? 'text-secondary font-bold' : 'hover:text-secondary'}`}
+                className={`transition text-sm tracking-wide ${isActive(link.path) ? 'text-secondary font-bold' : 'hover:text-secondary'}`}
               >
                 {link.name}
               </Link>

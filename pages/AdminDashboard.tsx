@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useSchoolStore } from '../context/SchoolContext';
 import { useNavigate, Routes, Route, Link, useLocation } from 'react-router-dom';
+// Explicitly import SchoolContextType to resolve type inference issues in sub-components
+import { SchoolContextType } from '../types';
 import { 
   LayoutDashboard, FileText, Calendar, Image as ImageIcon, 
   Download, Settings, LogOut, MessageSquare, BookOpen, Trash2, Plus, Edit,
   Users, Bell, CheckCircle, Clock, Search, ChevronRight, MoreHorizontal,
-  PenTool, FolderOpen
+  PenTool, FolderOpen, Folder, Filter, ExternalLink
 } from 'lucide-react';
 
 // --- UI Components Design System ---
@@ -101,7 +103,8 @@ const Button = ({ variant = 'primary', className = '', children, ...props }: Rea
 // --- Sub-components for Admin Sections ---
 
 const DashboardHome: React.FC = () => {
-  const { notices, enquiries, events, downloads } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to avoid unknown type inference errors
+  const { notices, enquiries, events, downloads } = useSchoolStore() as SchoolContextType;
   
   const stats = [
     { label: 'Total Students', value: '450', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', ring: 'ring-blue-100' },
@@ -193,7 +196,8 @@ const DashboardHome: React.FC = () => {
 };
 
 const ManageNotices: React.FC = () => {
-  const { notices, addNotice, deleteNotice } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
+  const { notices, addNotice, deleteNotice } = useSchoolStore() as SchoolContextType;
   const [form, setForm] = useState({ title: '', date: '', category: 'General', description: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -288,7 +292,8 @@ const ManageNotices: React.FC = () => {
 };
 
 const ManageEvents: React.FC = () => {
-    const { events, addEvent, deleteEvent } = useSchoolStore();
+    // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
+    const { events, addEvent, deleteEvent } = useSchoolStore() as SchoolContextType;
     const [form, setForm] = useState({ title: '', date: '', time: '', location: '', description: '' });
   
     const handleSubmit = (e: React.FormEvent) => {
@@ -389,7 +394,8 @@ const ManageEvents: React.FC = () => {
 };
 
 const ManageBlog: React.FC = () => {
-  const { blogPosts, addBlogPost, deleteBlogPost } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
+  const { blogPosts, addBlogPost, deleteBlogPost } = useSchoolStore() as SchoolContextType;
   const [form, setForm] = useState({ title: '', author: '', date: '', image: '', excerpt: '', content: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -488,17 +494,35 @@ const ManageBlog: React.FC = () => {
 };
 
 const ManageDownloads: React.FC = () => {
-    const { downloads, addDownload, deleteDownload } = useSchoolStore();
+    // Explicitly casting useSchoolStore() to SchoolContextType to avoid unknown type inference errors
+    const { downloads, addDownload, deleteDownload } = useSchoolStore() as SchoolContextType;
     const [form, setForm] = useState({ title: '', category: 'General', url: '' });
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterCategory, setFilterCategory] = useState('All');
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       addDownload(form);
       setForm({ title: '', category: 'General', url: '' });
     };
+
+    const categories = ['All', 'General', 'Prospectus', 'Syllabus', 'Homework', 'Forms'];
+    
+    const filteredDownloads = downloads.filter(dl => {
+        const matchesSearch = dl.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = filterCategory === 'All' || dl.category === filterCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    const groupedDownloads = filteredDownloads.reduce((acc, dl) => {
+        if (!acc[dl.category]) acc[dl.category] = [];
+        acc[dl.category].push(dl);
+        return acc;
+    }, {} as Record<string, typeof downloads>);
   
     return (
       <div className="space-y-8">
+        {/* Resource Addition Form */}
         <Card>
           <CardHeader title="Add New Resource" />
           <CardContent>
@@ -507,7 +531,7 @@ const ManageDownloads: React.FC = () => {
                 <Input required placeholder="Ex: Academic Calendar 2025" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
               </InputGroup>
               
-              <InputGroup label="Category">
+              <InputGroup label="Select Folder / Category">
                 <Select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                   <option>General</option>
                   <option>Prospectus</option>
@@ -518,70 +542,93 @@ const ManageDownloads: React.FC = () => {
               </InputGroup>
               
               <div className="md:col-span-2">
-                <InputGroup label="File Link / URL">
+                <InputGroup label="Download Link / URL">
                   <Input required placeholder="https://..." value={form.url} onChange={e => setForm({...form, url: e.target.value})} />
                 </InputGroup>
               </div>
               
               <div className="md:col-span-2 pt-2 flex justify-end">
-                 <Button type="submit"><Plus size={18} /> Add to Downloads</Button>
+                 <Button type="submit"><Plus size={18} /> Add to Folder</Button>
               </div>
             </form>
           </CardContent>
         </Card>
   
+        {/* Folder Browser & Manager */}
         <Card className="border-none shadow-none bg-transparent">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-gray-50/50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider font-semibold">
-                  <tr>
-                    <th className="px-6 py-4">Title</th>
-                    <th className="px-6 py-4">Category</th>
-                    <th className="px-6 py-4">Link</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {downloads.map(dl => (
-                    <tr key={dl.id} className="hover:bg-blue-50/30 transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                           <div className="p-2 bg-gray-50 text-gray-400 group-hover:text-primary group-hover:bg-blue-50 rounded transition-colors">
-                              <FileText size={16} />
-                           </div>
-                           <span className="font-bold text-gray-800">{dl.title}</span>
+            <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-50/30">
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <Input 
+                        placeholder="Search resources..." 
+                        className="pl-10 py-2"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                    <Filter size={16} className="text-gray-400" />
+                    <Select 
+                        className="py-2 text-xs w-full md:w-40" 
+                        value={filterCategory} 
+                        onChange={e => setFilterCategory(e.target.value)}
+                    >
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </Select>
+                </div>
+            </div>
+
+            <div className="p-0">
+                {Object.keys(groupedDownloads).length > 0 ? (
+                    <div className="divide-y divide-gray-100">
+                        {Object.entries(groupedDownloads).map(([category, items]) => (
+                            <div key={category} className="bg-white">
+                                <div className="px-6 py-3 bg-gray-50/50 flex items-center justify-between border-b border-gray-100">
+                                    <div className="flex items-center gap-2 text-gray-700">
+                                        <Folder className="text-primary" size={18} />
+                                        <h4 className="font-bold text-sm uppercase tracking-wider">{category}</h4>
+                                        <span className="bg-gray-200 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-bold">{items.length}</span>
+                                    </div>
+                                </div>
+                                <div className="divide-y divide-gray-50">
+                                    {items.map(dl => (
+                                        <div key={dl.id} className="px-6 py-4 hover:bg-blue-50/30 transition-colors group flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-2.5 bg-gray-50 text-gray-400 group-hover:text-primary group-hover:bg-blue-50 rounded-lg transition-colors border border-gray-100">
+                                                    <FileText size={18} />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="font-bold text-gray-800 text-sm truncate">{dl.title}</p>
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        <a href={dl.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-gray-400 hover:text-primary flex items-center gap-1">
+                                                            <ExternalLink size={10} /> Link: {dl.url.substring(0, 30)}...
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => deleteDownload(dl.id)} 
+                                                className="text-gray-300 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
+                                                title="Remove Resource"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="px-6 py-20 text-center text-gray-400">
+                        <div className="flex flex-col items-center gap-3">
+                            <FolderOpen size={48} className="opacity-10" />
+                            <p className="font-medium">No resources found matching your search.</p>
+                            <Button variant="secondary" onClick={() => {setSearchQuery(''); setFilterCategory('All')}}>Clear Filters</Button>
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-100 text-gray-600 uppercase tracking-tighter">
-                          {dl.category}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-400 text-xs truncate max-w-[150px]">{dl.url}</td>
-                      <td className="px-6 py-4 text-right">
-                        <button 
-                          onClick={() => deleteDownload(dl.id)} 
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                          title="Remove Resource"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {downloads.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-gray-400">
-                        <div className="flex flex-col items-center gap-2">
-                          <Download size={40} className="opacity-10" />
-                          <p>No downloads available.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    </div>
+                )}
             </div>
           </div>
         </Card>
@@ -590,7 +637,8 @@ const ManageDownloads: React.FC = () => {
 };
 
 const ManageEnquiries: React.FC = () => {
-  const { enquiries, updateEnquiryStatus } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to resolve unknown type inference for enquiries.length and enquiries.map
+  const { enquiries, updateEnquiryStatus } = useSchoolStore() as SchoolContextType;
 
   return (
     <div className="space-y-6">
@@ -606,12 +654,11 @@ const ManageEnquiries: React.FC = () => {
                   <th className="px-6 py-4">Applicant</th>
                   <th className="px-6 py-4">Interested In</th>
                   <th className="px-6 py-4">Message</th>
-                  <th className="px-6 py-4">Date</th>
                   <th className="px-6 py-4 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {enquiries.map(e => (
+                {enquiries.map((e) => (
                   <tr key={e.id} className="hover:bg-blue-50/30 transition-colors">
                     <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -634,7 +681,6 @@ const ManageEnquiries: React.FC = () => {
                             {e.message}
                         </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 text-xs font-mono">{e.date}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="relative inline-block w-32">
                           <Select 
@@ -673,7 +719,8 @@ const ManageEnquiries: React.FC = () => {
 };
 
 const ManagePages: React.FC = () => {
-  const { content, updateContent } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
+  const { content, updateContent } = useSchoolStore() as SchoolContextType;
   const [localContent, setLocalContent] = useState(content);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -750,7 +797,8 @@ const ManagePages: React.FC = () => {
 };
 
 const ManageSettings: React.FC = () => {
-  const { settings, updateSettings } = useSchoolStore();
+  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
+  const { settings, updateSettings } = useSchoolStore() as SchoolContextType;
   const [localSettings, setLocalSettings] = useState(settings);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -783,6 +831,23 @@ const ManageSettings: React.FC = () => {
                         <Input value={localSettings.address} onChange={e => setLocalSettings({...localSettings, address: e.target.value})} />
                     </InputGroup>
                 </div>
+            </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader title="Social Media Connections" />
+        <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+                <InputGroup label="Facebook URL">
+                    <Input placeholder="https://facebook.com/..." value={localSettings.facebook} onChange={e => setLocalSettings({...localSettings, facebook: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Instagram URL">
+                    <Input placeholder="https://instagram.com/..." value={localSettings.instagram} onChange={e => setLocalSettings({...localSettings, instagram: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Youtube URL">
+                    <Input placeholder="https://youtube.com/..." value={localSettings.youtube} onChange={e => setLocalSettings({...localSettings, youtube: e.target.value})} />
+                </InputGroup>
             </div>
         </CardContent>
       </Card>
@@ -825,10 +890,10 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex font-sans text-gray-800 selection:bg-primary/20">
       {/* Sidebar */}
       <aside className="w-72 bg-[#0f172a] text-white flex flex-col fixed h-full z-30 shadow-2xl transition-all duration-300">
-        <div className="h-20 flex items-center px-6 border-b border-gray-800 bg-[#020617]">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center font-bold mr-4 shadow-lg shadow-blue-900/40 text-lg">JIS</div>
+        <div className="h-24 flex items-center px-6 border-b border-gray-800 bg-[#020617]">
+          <img src="/logo.png" alt="Logo" className="w-12 h-12 rounded-lg object-contain bg-white/5 p-1 mr-4 shadow-lg shadow-blue-900/40" />
           <div>
-            <h2 className="text-base font-bold tracking-tight text-white">Admin Portal</h2>
+            <h2 className="text-base font-bold tracking-tight text-white uppercase">Admin Portal</h2>
             <div className="flex items-center gap-1.5 mt-0.5">
                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Online</p>

@@ -8,8 +8,11 @@ const defaultSettings: SchoolSettings = {
   name: "Jati International School",
   tagline: "Nurturing Global Minds with Local Values",
   address: "Salipur, Cuttack, Odisha",
-  phone: "+91-9937033007",
-  email: "info@jatiinternationalschool.com"
+  phone: "9937033007",
+  email: "info@jatiinternationalschool.com",
+  facebook: "https://www.facebook.com/jatiinternationalschool",
+  instagram: "https://www.instagram.com/jatiinternationalschool",
+  youtube: "https://www.youtube.com/@jatiinternationalschool"
 };
 
 const defaultContent: SiteContent = {
@@ -46,6 +49,7 @@ const initialGallery: GalleryItem[] = [
 ];
 
 const initialDownloads: DownloadItem[] = [
+  { id: '0', title: 'Student Admission Application Form (Nursery to Std 5)', category: 'Forms', url: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=1000' },
   { id: '1', title: 'School Prospectus 2025-26', category: 'Prospectus', url: '#' },
   { id: '2', title: 'Academic Calendar', category: 'General', url: '#' },
   { id: '3', title: 'Class X Syllabus', category: 'Syllabus', url: '#' },

@@ -56,6 +56,9 @@ export interface SchoolSettings {
   address: string;
   phone: string;
   email: string;
+  facebook: string;
+  instagram: string;
+  youtube: string;
 }
 
 export interface SiteContent {

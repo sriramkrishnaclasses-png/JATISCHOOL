@@ -14,6 +14,11 @@ import Blog from './pages/Blog';
 import SinglePost from './pages/SinglePost';
 import AdminDashboard from './pages/AdminDashboard';
 import Login from './pages/Login';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import SiteMap from './pages/SiteMap';
+import TermsAndConditions from './pages/TermsAndConditions';
+import MandatoryDisclosures from './pages/MandatoryDisclosures';
+import CBSEAffiliation from './pages/CBSEAffiliation';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -46,6 +51,11 @@ const App: React.FC = () => {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<SinglePost />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/mandatory-disclosures" element={<MandatoryDisclosures />} />
+            <Route path="/cbse-affiliation" element={<CBSEAffiliation />} />
+            <Route path="/site-map" element={<SiteMap />} />
           </Route>
 
           {/* Auth & Admin Routes */}

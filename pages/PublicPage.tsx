@@ -131,7 +131,7 @@ const PublicPage: React.FC = () => {
         <div className="absolute inset-0 bg-[url('https://picsum.photos/1920/1080?blur=2')] bg-cover bg-center opacity-40"></div>
         
         <div className="container mx-auto px-4 relative z-20 text-center">
-          <span className="inline-block py-1 px-3 rounded-full bg-secondary text-xs font-bold mb-4 uppercase tracking-wider">Admissions Open 2025-26</span>
+          <span className="inline-block py-1 px-3 rounded-full bg-secondary text-xs font-bold mb-4 uppercase tracking-wider">Admissions Open 2026-27</span>
           <h2 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">Welcome to <br/>{settings.name}</h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">{settings.tagline}</p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -315,25 +315,26 @@ const PublicPage: React.FC = () => {
           </div>
           
           <div className="bg-white p-6 shadow-xl rounded-xl border border-gray-100">
-            <h3 className="text-xl font-bold mb-4 text-center">Fee Structure (Indicative)</h3>
+            <h3 className="text-xl font-bold mb-4 text-center">Fee Structure (2026-27 Session)</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+              <table className="w-full text-xs text-left">
                 <thead className="bg-gray-100 text-gray-700">
                   <tr>
                     <th className="p-3 rounded-tl">Class</th>
                     <th className="p-3">Admission</th>
-                    <th className="p-3 rounded-tr">Monthly Fee</th>
+                    <th className="p-3">Event+Exam</th>
+                    <th className="p-3 rounded-tr">Monthly</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  <tr><td className="p-3">Nursery - UKG</td><td className="p-3">₹10,000</td><td className="p-3">₹1,500</td></tr>
-                  <tr><td className="p-3">Std I - V</td><td className="p-3">₹12,000</td><td className="p-3">₹1,800</td></tr>
-                  <tr><td className="p-3">Std VI - VIII</td><td className="p-3">₹15,000</td><td className="p-3">₹2,200</td></tr>
-                  <tr><td className="p-3">Std IX - X</td><td className="p-3">₹18,000</td><td className="p-3">₹2,500</td></tr>
+                  <tr><td className="p-3">Nursery</td><td className="p-3 text-emerald-600 font-bold">₹0</td><td className="p-3">₹1,000</td><td className="p-3">₹500</td></tr>
+                  <tr><td className="p-3">Std I</td><td className="p-3 text-emerald-600 font-bold">₹0</td><td className="p-3">₹1,100</td><td className="p-3">₹650</td></tr>
+                  <tr><td className="p-3">Std III</td><td className="p-3 text-emerald-600 font-bold">₹0</td><td className="p-3">₹1,300</td><td className="p-3">₹800</td></tr>
+                  <tr><td className="p-3">Std V</td><td className="p-3 text-emerald-600 font-bold">₹0</td><td className="p-3">₹1,300</td><td className="p-3">₹1,100</td></tr>
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-gray-500 mt-4">* Transport and uniform charges extra.</p>
+            <p className="text-xs text-gray-500 mt-4">* Detailed fee breakdown available in Admissions section.</p>
           </div>
         </div>
       </Section>

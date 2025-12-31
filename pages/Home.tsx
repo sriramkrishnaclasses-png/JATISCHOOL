@@ -17,56 +17,56 @@ const Home: React.FC = () => {
   return (
     <div className="font-sans text-gray-800">
       
-      {/* Mobile-First Gurukul Hero Section */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-stone-900">
+      {/* Hero Section with Centered Branding */}
+      <section className="relative min-h-[85vh] flex items-center justify-center px-6 overflow-hidden bg-stone-900">
         
         {/* Background Image & Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1544911845-1f34a3eb46b1?q=80&w=1920&auto=format&fit=crop" 
             alt="Students learning in nature" 
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-stone-900/70 via-stone-900/50 to-stone-900/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-900/90 via-stone-900/60 to-stone-900/90"></div>
         </div>
         
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center h-full justify-center py-20">
-          {/* Trust Line */}
-          <p className="text-xs md:text-sm text-yellow-100/90 tracking-[0.2em] uppercase mb-6 font-medium border-b border-yellow-100/20 pb-2">
+        <div className="relative z-10 container mx-auto text-center py-20">
+          <div className="mb-8 animate-fadeIn">
+            <img src="/logo.png" alt="Jati International School Crest" className="h-32 md:h-40 w-auto mx-auto drop-shadow-2xl" />
+          </div>
+
+          <p className="text-xs md:text-sm text-yellow-100/90 tracking-[0.2em] uppercase mb-6 font-medium border-b border-yellow-100/20 pb-2 inline-block">
             Nursery to Class V | Gurukul-Inspired • Value-Based
           </p>
 
-          {/* Headline */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-medium text-white mb-6 leading-[1.15] drop-shadow-lg">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-medium text-white mb-6 leading-[1.15] drop-shadow-lg max-w-5xl mx-auto">
             Education that Shapes <br className="hidden md:block" />
-            <span className="text-yellow-50">Character, Clarity, & Confidence</span>
+            <span className="text-yellow-50">Character & Clarity</span>
           </h1>
 
-          {/* Subheading */}
-          <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed font-light">
+          <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed font-light mx-auto">
             Blending timeless Gurukul values with a strong CBSE-aligned foundation to nurture disciplined and confident learners.
           </p>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto max-w-sm md:max-w-none mx-auto">
+          <div className="flex flex-wrap gap-4 justify-center">
             <Link 
               to="/admissions" 
-              className="bg-emerald-900 hover:bg-emerald-800 text-white px-8 py-4 rounded-lg font-bold tracking-wide shadow-lg transition-all w-full md:w-auto uppercase text-sm border border-emerald-800/50"
+              className="bg-emerald-900 hover:bg-emerald-800 text-white px-10 py-4 rounded-lg font-bold tracking-wide shadow-lg transition-all uppercase text-xs border border-emerald-800/50"
             >
               Apply Now
             </Link>
             <Link 
               to="/downloads" 
-              className="bg-transparent border border-yellow-100/60 text-yellow-50 hover:bg-white/10 px-8 py-4 rounded-lg font-bold tracking-wide transition-all w-full md:w-auto uppercase text-sm backdrop-blur-sm"
+              className="bg-white/10 border border-yellow-100/60 text-yellow-50 hover:bg-white/20 px-10 py-4 rounded-lg font-bold tracking-wide transition-all uppercase text-xs backdrop-blur-sm"
             >
-              Download Prospectus
+              Prospectus
             </Link>
           </div>
+        </div>
 
-          {/* Tagline Footer */}
-          <div className="absolute bottom-8 left-0 right-0 text-center opacity-80">
-            <p className="text-sm font-serif italic text-yellow-100/80 tracking-widest">Realisation of Self</p>
-          </div>
+        {/* Tagline Footer */}
+        <div className="absolute bottom-8 left-0 right-0 text-center opacity-60 pointer-events-none">
+          <p className="text-xs md:text-sm font-serif italic text-yellow-100/80 tracking-[0.4em] uppercase">Realisation of Self</p>
         </div>
       </section>
 
@@ -145,7 +145,7 @@ const Home: React.FC = () => {
                   <div key={evt.id} className="flex gap-3 items-center p-2 hover:bg-gray-50 rounded transition">
                     <div className="bg-blue-50 text-blue-800 p-2 rounded text-center min-w-[50px]">
                        <span className="block text-xs font-bold uppercase">{new Date(evt.date).toLocaleString('default', { month: 'short' })}</span>
-                       <span className="block text-xl font-bold">{new Date(evt.date).getDate()}</span>
+                       <span className="block text-lg font-bold">{new Date(evt.date).getDate()}</span>
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-gray-800">{evt.title}</h4>
