@@ -2,82 +2,95 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSchoolStore } from '../context/SchoolContext';
 import { MapPin, Phone, Mail, Facebook, Instagram, Youtube } from 'lucide-react';
+import Logo from './Logo';
 
 const Footer: React.FC = () => {
   const { settings } = useSchoolStore();
   
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12 mt-auto">
-      <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8">
+    <footer className="bg-[#051a14] text-stone-400 py-16 mt-auto border-t-4 border-secondary">
+      <div className="container mx-auto px-4 grid md:grid-cols-4 gap-12">
          <div>
-           <img src="/logo.png" alt="Jati International School Crest" className="h-20 w-auto mb-6 opacity-90 drop-shadow-md" />
-           <p className="text-sm leading-relaxed mb-4">
-             {settings.tagline}. Dedicated to excellence in education and character building.
+           <div className="mb-6">
+             <h3 className="text-white font-serif font-bold text-2xl uppercase tracking-tighter">{settings.name}</h3>
+             <div className="w-12 h-1 bg-secondary mt-2"></div>
+           </div>
+           <p className="text-sm leading-relaxed mb-6 font-medium">
+             {settings.tagline}. Dedicated to excellence in education and holistic character development.
            </p>
            <div className="flex gap-4">
              <a 
                href={settings.facebook} 
                target="_blank" 
                rel="noopener noreferrer" 
-               className="hover:text-blue-500 transition-colors"
+               className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary hover:text-primary transition-all duration-300"
                aria-label="Facebook"
              >
-               <Facebook size={20} />
+               <Facebook size={18} />
              </a>
              <a 
                href={settings.instagram} 
                target="_blank" 
                rel="noopener noreferrer" 
-               className="hover:text-pink-500 transition-colors"
+               className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary hover:text-primary transition-all duration-300"
                aria-label="Instagram"
              >
-               <Instagram size={20} />
+               <Instagram size={18} />
              </a>
              <a 
                href={settings.youtube} 
                target="_blank" 
                rel="noopener noreferrer" 
-               className="hover:text-red-500 transition-colors"
+               className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary hover:text-primary transition-all duration-300"
                aria-label="Youtube"
              >
-               <Youtube size={20} />
+               <Youtube size={18} />
              </a>
            </div>
          </div>
          
          <div>
-           <h4 className="text-white font-bold mb-4">Quick Links</h4>
-           <ul className="space-y-2 text-sm">
-             <li><Link to="/about" className="hover:text-secondary transition-colors">About Us</Link></li>
-             <li><Link to="/academics" className="hover:text-secondary transition-colors">Academics</Link></li>
-             <li><Link to="/admissions" className="hover:text-secondary transition-colors">Admissions</Link></li>
-             <li><Link to="/gallery" className="hover:text-secondary transition-colors">Gallery</Link></li>
-             <li><Link to="/site-map" className="hover:text-secondary transition-colors">Site Map</Link></li>
-             <li><Link to="/blog" className="hover:text-secondary transition-colors">Blog</Link></li>
+           <h4 className="text-white font-serif font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
+           <ul className="space-y-3 text-sm">
+             <li><Link to="/about" className="hover:text-secondary transition-colors flex items-center gap-2">• About Us</Link></li>
+             <li><Link to="/academics" className="hover:text-secondary transition-colors flex items-center gap-2">• Academics</Link></li>
+             <li><Link to="/admissions" className="hover:text-secondary transition-colors flex items-center gap-2">• Admissions</Link></li>
+             <li><Link to="/gallery" className="hover:text-secondary transition-colors flex items-center gap-2">• Gallery</Link></li>
+             <li><Link to="/site-map" className="hover:text-secondary transition-colors flex items-center gap-2">• Site Map</Link></li>
+             <li><Link to="/blog" className="hover:text-secondary transition-colors flex items-center gap-2">• Blog</Link></li>
            </ul>
          </div>
 
          <div>
-           <h4 className="text-white font-bold mb-4">Information</h4>
-           <ul className="space-y-2 text-sm">
-             <li><Link to="/privacy-policy" className="hover:text-secondary transition-colors">Privacy Policy</Link></li>
-             <li><Link to="/terms-and-conditions" className="hover:text-secondary transition-colors">Terms & Conditions</Link></li>
-             <li><Link to="/mandatory-disclosures" className="hover:text-secondary transition-colors">Mandatory Disclosures</Link></li>
-             <li><Link to="/cbse-affiliation" className="hover:text-secondary transition-colors">CBSE Affiliation</Link></li>
+           <h4 className="text-white font-serif font-bold text-lg mb-6 uppercase tracking-wider">Legal Info</h4>
+           <ul className="space-y-3 text-sm">
+             <li><Link to="/privacy-policy" className="hover:text-secondary transition-colors flex items-center gap-2">• Privacy Policy</Link></li>
+             <li><Link to="/terms-and-conditions" className="hover:text-secondary transition-colors flex items-center gap-2">• Terms & Conditions</Link></li>
+             <li><Link to="/mandatory-disclosures" className="hover:text-secondary transition-colors flex items-center gap-2">• Mandatory Disclosures</Link></li>
+             <li><Link to="/cbse-affiliation" className="hover:text-secondary transition-colors flex items-center gap-2">• CBSE Affiliation</Link></li>
            </ul>
          </div>
 
          <div>
-           <h4 className="text-white font-bold mb-4">Contact</h4>
-           <ul className="space-y-2 text-sm">
-             <li className="flex items-start gap-2"><MapPin size={16} className="mt-1 flex-shrink-0 text-secondary" /> {settings.address}</li>
-             <li className="flex items-center gap-2"><Phone size={16} className="text-secondary" /> {settings.phone}</li>
-             <li className="flex items-center gap-2"><Mail size={16} className="text-secondary" /> {settings.email}</li>
+           <h4 className="text-white font-serif font-bold text-lg mb-6 uppercase tracking-wider">Reach Us</h4>
+           <ul className="space-y-4 text-sm">
+             <li className="flex items-start gap-3">
+                <MapPin size={20} className="text-secondary shrink-0" /> 
+                <span className="leading-relaxed">{settings.address}</span>
+             </li>
+             <li className="flex items-center gap-3">
+                <Phone size={20} className="text-secondary shrink-0" /> 
+                <span className="font-bold">{settings.phone}</span>
+             </li>
+             <li className="flex items-center gap-3">
+                <Mail size={20} className="text-secondary shrink-0" /> 
+                <span className="break-all">{settings.email}</span>
+             </li>
            </ul>
          </div>
       </div>
-      <div className="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
-        <p>&copy; {new Date().getFullYear()} {settings.name}. All Rights Reserved.</p>
+      <div className="border-t border-white/5 mt-16 pt-8 text-center text-xs tracking-widest uppercase font-bold text-stone-500">
+        <p>&copy; {new Date().getFullYear()} {settings.name}. <span className="text-secondary/50">Designed for Excellence.</span></p>
       </div>
     </footer>
   );

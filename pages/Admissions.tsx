@@ -4,7 +4,7 @@ import { useSchoolStore } from '../context/SchoolContext';
 import { Send, CheckCircle, Info, Mail, Phone, User } from 'lucide-react';
 
 const Admissions: React.FC = () => {
-  const { downloads, addEnquiry } = useSchoolStore();
+  const { downloads, addEnquiry, settings } = useSchoolStore();
   const applicationForm = downloads.find(d => d.id === '0');
 
   // Enquiry Form State
@@ -34,13 +34,14 @@ const Admissions: React.FC = () => {
   ];
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="bg-primary text-white py-20 text-center relative overflow-hidden">
+    <div className="bg-stone-50 min-h-screen">
+      <div className="bg-primary text-white py-16 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1523050335392-93851179428c?q=80&w=1000')] bg-cover bg-center"></div>
         <div className="relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Admissions 2026-27</h1>
-          <p className="text-blue-100 max-w-2xl mx-auto px-4 uppercase tracking-widest text-xs font-semibold">
-            Nurturing Excellence, character, and discipline
+          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">Admissions 2026-27</h1>
+          <div className="w-16 h-1 bg-secondary mx-auto mb-4"></div>
+          <p className="text-secondary max-w-2xl mx-auto px-4 uppercase tracking-[0.3em] text-xs font-bold">
+            {settings.tagline}
           </p>
         </div>
       </div>
@@ -50,20 +51,20 @@ const Admissions: React.FC = () => {
           
           {/* Column 1: Admission Process */}
           <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold mb-8 text-gray-800 flex items-center gap-2">
-              <Info className="text-primary" size={24} />
-              Admission Process
+            <h3 className="text-2xl font-serif font-bold mb-8 text-gray-800 flex items-center gap-2">
+              <Info className="text-secondary" size={24} />
+              The Path to JIS
             </h3>
-            <div className="space-y-8 border-l-2 border-primary/20 pl-8 relative ml-4">
+            <div className="space-y-8 border-l-2 border-secondary/30 pl-8 relative ml-4">
                {[
-                 { step: "1", title: "Enquiry", desc: "Visit our campus or fill out the enquiry form to initiate the process." },
-                 { step: "2", title: "Registration", desc: "Obtain the admission kit and submit the completed registration form." },
-                 { step: "3", title: "Assessment", desc: "Interactive session for early years; written assessment for primary students." },
-                 { step: "4", title: "Verification", desc: "Submit required documents including TC, Birth Certificate, and Aadhar." },
-                 { step: "5", title: "Confirmation", desc: "Complete the fee formalities to secure your child's seat." }
-               ].map((s, i) => (
+                 { step: "1", title: "Enquiry", desc: "Start your journey by filling our digital enquiry form." },
+                 { step: "2", title: "Registration", desc: "Visit our campus to obtain the registration kit." },
+                 { step: "3", title: "Interaction", desc: "Participate in a friendly session for holistic assessment." },
+                 { step: "4", title: "Verification", desc: "Submit documentation: Birth Certificate, TC, and Aadhar." },
+                 { step: "5", title: "Confirmation", desc: "Secure the seat by fulfilling the admission formalities." }
+               ].map((s, i) => (s &&
                  <div key={i} className="relative">
-                   <div className="absolute -left-[45px] w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-primary/20">
+                   <div className="absolute -left-[45px] w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-primary text-xs font-bold shadow-md">
                      {s.step}
                    </div>
                    <h4 className="font-bold text-lg text-primary">{s.title}</h4>
@@ -71,13 +72,13 @@ const Admissions: React.FC = () => {
                  </div>
                ))}
             </div>
-            <div className="mt-12 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
-                <p className="text-sm text-gray-500 mb-4">Prefer offline application?</p>
+            <div className="mt-12 bg-white p-6 rounded-2xl shadow-sm border border-stone-200 text-center">
+                <p className="text-sm text-gray-500 mb-4 italic">Ready to proceed?</p>
                 <a 
                   href={applicationForm?.url || "#"} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-primary px-6 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 border border-gray-200"
+                  className="w-full bg-stone-50 hover:bg-stone-100 text-primary px-6 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2 border border-stone-200"
                 >
                   Download Application Form
                 </a>
@@ -86,70 +87,69 @@ const Admissions: React.FC = () => {
           
           {/* Column 2: Fee Structure */}
           <div className="lg:col-span-1">
-             <div className="bg-white p-6 md:p-8 shadow-xl rounded-2xl border border-gray-100 ring-1 ring-gray-200/50">
-                <h3 className="text-xl font-bold mb-6 text-center text-primary">Fee Structure (2026-27)</h3>
+             <div className="bg-white p-6 md:p-8 shadow-xl rounded-2xl border border-stone-100 ring-1 ring-stone-200/50">
+                <h3 className="text-xl font-serif font-bold mb-6 text-center text-primary">Academic Investment (2026-27)</h3>
                 <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
                     <thead className="bg-primary text-white">
                     <tr>
-                        <th className="p-3 border border-blue-800 rounded-tl-lg">Class</th>
-                        <th className="p-3 border border-blue-800">Event+Exam</th>
-                        <th className="p-3 border border-blue-800 rounded-tr-lg">Monthly</th>
+                        <th className="p-3 border border-stone-800 rounded-tl-lg">Class</th>
+                        <th className="p-3 border border-stone-800">Annual Charges</th>
+                        <th className="p-3 border border-stone-800 rounded-tr-lg">Monthly Fee</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y text-gray-700">
                       {feeData.map((row, idx) => (
-                        <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50'}>
                           <td className="p-3 border font-medium">{row.class}</td>
-                          <td className="p-3 border bg-yellow-50/30">₹{row.eventExam}</td>
-                          <td className="p-3 border font-bold text-emerald-700">₹{row.monthly}</td>
+                          <td className="p-3 border text-accent">₹{row.eventExam}</td>
+                          <td className="p-3 border font-bold text-primary">₹{row.monthly}</td>
                         </tr>
                       ))}
                     </tbody>
                 </table>
                 </div>
-                <div className="mt-6 bg-blue-50 p-4 rounded-xl text-xs text-blue-800 space-y-2 border border-blue-100">
+                <div className="mt-6 bg-accent/5 p-4 rounded-xl text-xs text-accent space-y-2 border border-accent/10">
                     <p className="font-bold uppercase tracking-wider text-[10px]">Admission Notice:</p>
-                    <p>• Admission fee is completely waived (₹0) for the current session.</p>
-                    <p>• Annual charges (Event+Exam) are collected at the session start.</p>
-                    <p>• Books and transport are charged extra as per actuals.</p>
+                    <p>• Admission fee is fully waived (₹0) for the current session.</p>
+                    <p>• Annual charges (Event+Exam) are collected at the start of the session.</p>
                 </div>
             </div>
           </div>
 
           {/* Column 3: Admission Enquiry Form */}
           <div className="lg:col-span-1">
-            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-stone-200 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16"></div>
               
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">Admission Enquiry</h3>
-              <p className="text-gray-500 text-sm mb-8">Reach out for personalized assistance.</p>
+              <h3 className="text-2xl font-serif font-bold mb-2 text-gray-800">Digital Enquiry</h3>
+              <p className="text-gray-500 text-sm mb-8">Reach out for personalized counseling.</p>
               
               {formStatus === 'success' ? (
                 <div className="py-12 text-center animate-fadeIn">
-                  <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-emerald-500/20">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-secondary shadow-lg">
                     <CheckCircle size={32} />
                   </div>
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">Enquiry Sent!</h4>
-                  <p className="text-gray-500 text-sm">Our admissions coordinator will contact you shortly to guide you further.</p>
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">Enquiry Logged</h4>
+                  <p className="text-gray-500 text-sm">Our admissions coordinator will contact you shortly.</p>
                   <button 
                     onClick={() => setFormStatus('idle')}
                     className="mt-6 text-primary font-bold text-sm hover:underline"
                   >
-                    Send another enquiry
+                    New Enquiry
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleEnquirySubmit} className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Student Name</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Student Full Name</label>
                     <div className="relative">
                       <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         required
                         type="text" 
-                        placeholder="e.g. Rahul Sharma" 
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition"
+                        placeholder="Full Name" 
+                        className="w-full pl-10 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:bg-white transition"
                         value={enquiryForm.name}
                         onChange={e => setEnquiryForm({...enquiryForm, name: e.target.value})}
                       />
@@ -157,14 +157,14 @@ const Admissions: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Parent Phone</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Parent Contact</label>
                     <div className="relative">
                       <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                       <input 
                         required
                         type="tel" 
-                        placeholder="9937033007" 
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition"
+                        placeholder="Phone Number" 
+                        className="w-full pl-10 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:bg-white transition"
                         value={enquiryForm.phone}
                         onChange={e => setEnquiryForm({...enquiryForm, phone: e.target.value})}
                       />
@@ -178,8 +178,8 @@ const Admissions: React.FC = () => {
                       <input 
                         required
                         type="email" 
-                        placeholder="parent@example.com" 
-                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition"
+                        placeholder="parent@email.com" 
+                        className="w-full pl-10 pr-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:bg-white transition"
                         value={enquiryForm.email}
                         onChange={e => setEnquiryForm({...enquiryForm, email: e.target.value})}
                       />
@@ -187,14 +187,14 @@ const Admissions: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Class Interested</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Class Sought</label>
                     <select 
                       required
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition text-gray-600 appearance-none"
+                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:bg-white transition text-gray-600 appearance-none"
                       value={enquiryForm.classInterested}
                       onChange={e => setEnquiryForm({...enquiryForm, classInterested: e.target.value})}
                     >
-                      <option value="">Select Class</option>
+                      <option value="">Select Grade</option>
                       <option value="Nursery">Nursery</option>
                       <option value="KG I">KG I</option>
                       <option value="KG II">KG II</option>
@@ -207,11 +207,11 @@ const Admissions: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Questions (Optional)</label>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Message (Optional)</label>
                     <textarea 
-                      placeholder="Your message here..." 
+                      placeholder="Special requirements..." 
                       rows={3} 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition"
+                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:bg-white transition"
                       value={enquiryForm.message}
                       onChange={e => setEnquiryForm({...enquiryForm, message: e.target.value})}
                     ></textarea>
@@ -220,10 +220,10 @@ const Admissions: React.FC = () => {
                   <button 
                     type="submit" 
                     disabled={formStatus !== 'idle'}
-                    className={`w-full py-4 rounded-xl font-bold text-white transition shadow-lg flex items-center justify-center gap-2 ${formStatus === 'submitting' ? 'bg-primary/70' : 'bg-primary hover:bg-blue-800 shadow-primary/20'}`}
+                    className={`w-full py-4 rounded-xl font-bold text-primary transition shadow-lg flex items-center justify-center gap-2 ${formStatus === 'submitting' ? 'bg-secondary/70' : 'bg-secondary hover:bg-secondary/90 shadow-secondary/20'}`}
                   >
                     {formStatus === 'submitting' ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
                     ) : (
                       <>
                         <Send size={18} /> Submit Enquiry

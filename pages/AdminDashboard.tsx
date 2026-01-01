@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useSchoolStore } from '../context/SchoolContext';
 import { useNavigate, Routes, Route, Link, useLocation } from 'react-router-dom';
+import Logo from '../components/Logo';
 // Explicitly import SchoolContextType to resolve type inference issues in sub-components
 import { SchoolContextType } from '../types';
 import { 
   LayoutDashboard, FileText, Calendar, Image as ImageIcon, 
   Download, Settings, LogOut, MessageSquare, BookOpen, Trash2, Plus, Edit,
   Users, Bell, CheckCircle, Clock, Search, ChevronRight, MoreHorizontal,
-  PenTool, FolderOpen, Folder, Filter, ExternalLink
+  PenTool, FolderOpen, Folder, Filter, ExternalLink, X
 } from 'lucide-react';
 
 // --- UI Components Design System ---
@@ -195,531 +196,353 @@ const DashboardHome: React.FC = () => {
   );
 };
 
+// --- Management Components ---
+
 const ManageNotices: React.FC = () => {
-  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
   const { notices, addNotice, deleteNotice } = useSchoolStore() as SchoolContextType;
-  const [form, setForm] = useState({ title: '', date: '', category: 'General', description: '' });
+  const [showAdd, setShowAdd] = useState(false);
+  const [formData, setFormData] = useState({ title: '', date: new Date().toISOString().split('T')[0], category: 'General', description: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addNotice(form);
-    setForm({ title: '', date: '', category: 'General', description: '' });
+    addNotice(formData);
+    setShowAdd(false);
+    setFormData({ title: '', date: new Date().toISOString().split('T')[0], category: 'General', description: '' });
   };
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader title="Create Notice" />
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-            <InputGroup label="Notice Title">
-              <Input required placeholder="Ex: Summer Vacation" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
-            </InputGroup>
-            
-            <InputGroup label="Publish Date">
-              <Input required type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
-            </InputGroup>
-            
-            <InputGroup label="Category">
-              <Select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                <option>General</option><option>Holiday</option><option>Exam</option><option>Fee</option><option>Events</option><option>Academics</option>
-              </Select>
-            </InputGroup>
-            
-            <InputGroup label="Short Description">
-              <Input required placeholder="Brief detail about the notice" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
-            </InputGroup>
-            
-            <div className="md:col-span-2 pt-2 flex justify-end">
-               <Button type="submit"><Plus size={18} /> Publish Notice</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Manage Notices</h2>
+        <Button onClick={() => setShowAdd(!showAdd)}>
+          {showAdd ? <X size={18} /> : <Plus size={18} />}
+          {showAdd ? 'Cancel' : 'Add New Notice'}
+        </Button>
+      </div>
 
-      <Card className="border-none shadow-none bg-transparent">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      {showAdd && (
+        <Card>
+          <CardHeader title="Add New Notice" />
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <InputGroup label="Notice Title">
+                  <Input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Date">
+                  <Input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                </InputGroup>
+              </div>
+              <InputGroup label="Category">
+                <Select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                  <option value="General">General</option>
+                  <option value="Holiday">Holiday</option>
+                  <option value="Events">Events</option>
+                  <option value="Academics">Academics</option>
+                  <option value="Fee">Fee</option>
+                </Select>
+              </InputGroup>
+              <InputGroup label="Description">
+                <TextArea rows={4} required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+              </InputGroup>
+              <Button type="submit">Save Notice</Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-gray-50/50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider font-semibold">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
                 <tr>
                   <th className="px-6 py-4">Date</th>
                   <th className="px-6 py-4">Title</th>
                   <th className="px-6 py-4">Category</th>
-                  <th className="px-6 py-4">Description</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {notices.map(n => (
-                  <tr key={n.id} className="hover:bg-blue-50/30 transition-colors group">
-                    <td className="px-6 py-4 text-gray-500 font-medium font-mono text-xs">{n.date}</td>
-                    <td className="px-6 py-4 font-bold text-gray-800">{n.title}</td>
+                {notices.map(notice => (
+                  <tr key={notice.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-medium">{notice.date}</td>
+                    <td className="px-6 py-4">{notice.title}</td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                        {n.category}
-                      </span>
+                      <span className="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] font-bold uppercase">{notice.category}</span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 max-w-xs truncate">{n.description}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button 
-                        onClick={() => deleteNotice(n.id)} 
-                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                        title="Delete Notice"
-                      >
-                        <Trash2 size={16} />
+                    <td className="px-6 py-4">
+                      <button onClick={() => deleteNotice(notice.id)} className="text-red-500 hover:text-red-700">
+                        <Trash2 size={18} />
                       </button>
                     </td>
                   </tr>
                 ))}
-                {notices.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
-                      <div className="flex flex-col items-center gap-2">
-                        <FileText size={40} className="opacity-10" />
-                        <p>No notices found.</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
-        </div>
+        </CardContent>
       </Card>
     </div>
   );
 };
 
 const ManageEvents: React.FC = () => {
-    // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
-    const { events, addEvent, deleteEvent } = useSchoolStore() as SchoolContextType;
-    const [form, setForm] = useState({ title: '', date: '', time: '', location: '', description: '' });
-  
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      addEvent(form);
-      setForm({ title: '', date: '', time: '', location: '', description: '' });
-    };
-  
-    return (
-      <div className="space-y-8">
-        <Card>
-          <CardHeader title="Schedule Event" />
-          <CardContent>
-            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-              <InputGroup label="Event Title">
-                <Input required placeholder="Ex: Annual Sports Day" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
-              </InputGroup>
-              
-              <InputGroup label="Date">
-                <Input required type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
-              </InputGroup>
-
-              <InputGroup label="Time">
-                <Input required type="time" value={form.time} onChange={e => setForm({...form, time: e.target.value})} />
-              </InputGroup>
-              
-              <InputGroup label="Location">
-                <Input required placeholder="Ex: School Auditorium" value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
-              </InputGroup>
-              
-              <div className="md:col-span-2">
-                <InputGroup label="Event Details">
-                  <Input required placeholder="Describe the event..." value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
-                </InputGroup>
-              </div>
-              
-              <div className="md:col-span-2 pt-2 flex justify-end">
-                 <Button type="submit"><Plus size={18} /> Add Event</Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-  
-        <Card className="border-none shadow-none bg-transparent">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-gray-50/50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider font-semibold">
-                  <tr>
-                    <th className="px-6 py-4">When</th>
-                    <th className="px-6 py-4">Event</th>
-                    <th className="px-6 py-4">Location</th>
-                    <th className="px-6 py-4">Description</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {events.map(ev => (
-                    <tr key={ev.id} className="hover:bg-blue-50/30 transition-colors group">
-                      <td className="px-6 py-4">
-                          <div className="font-bold text-gray-800 text-xs bg-gray-100 px-2 py-1 rounded inline-block mb-1">{ev.date}</div>
-                          <div className="text-xs text-gray-500 flex items-center gap-1"><Clock size={12}/> {ev.time}</div>
-                      </td>
-                      <td className="px-6 py-4 font-bold text-gray-800">{ev.title}</td>
-                      <td className="px-6 py-4 text-gray-500 flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-green-400"></span>
-                        {ev.location}
-                      </td>
-                      <td className="px-6 py-4 text-gray-500 max-w-xs truncate">{ev.description}</td>
-                      <td className="px-6 py-4 text-right">
-                        <button 
-                          onClick={() => deleteEvent(ev.id)} 
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                          title="Remove Event"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {events.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
-                        <div className="flex flex-col items-center gap-2">
-                          <Calendar size={40} className="opacity-10" />
-                          <p>No events scheduled.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-};
-
-const ManageBlog: React.FC = () => {
-  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
-  const { blogPosts, addBlogPost, deleteBlogPost } = useSchoolStore() as SchoolContextType;
-  const [form, setForm] = useState({ title: '', author: '', date: '', image: '', excerpt: '', content: '' });
+  const { events, addEvent, deleteEvent } = useSchoolStore() as SchoolContextType;
+  const [showAdd, setShowAdd] = useState(false);
+  const [formData, setFormData] = useState({ title: '', date: '', time: '', location: '', description: '' });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addBlogPost(form);
-    setForm({ title: '', author: '', date: '', image: '', excerpt: '', content: '' });
+    addEvent(formData);
+    setShowAdd(false);
+    setFormData({ title: '', date: '', time: '', location: '', description: '' });
   };
 
   return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader title="Write Blog Post" />
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-            <InputGroup label="Article Title">
-              <Input required placeholder="Title of the post" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
-            </InputGroup>
-            
-            <InputGroup label="Author">
-               <Input required placeholder="E.g. Principal, Sports Desk" value={form.author} onChange={e => setForm({...form, author: e.target.value})} />
-            </InputGroup>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Manage Events</h2>
+        <Button onClick={() => setShowAdd(!showAdd)}>
+          {showAdd ? <X size={18} /> : <Plus size={18} />}
+          {showAdd ? 'Cancel' : 'Add New Event'}
+        </Button>
+      </div>
 
-            <InputGroup label="Publish Date">
-              <Input required type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
-            </InputGroup>
-
-            <InputGroup label="Featured Image URL">
-              <Input placeholder="https://..." value={form.image} onChange={e => setForm({...form, image: e.target.value})} />
-            </InputGroup>
-            
-            <div className="md:col-span-2">
-               <InputGroup label="Short Excerpt">
-                  <Input required placeholder="Short summary for the card view..." value={form.excerpt} onChange={e => setForm({...form, excerpt: e.target.value})} />
-               </InputGroup>
-            </div>
-
-            <div className="md:col-span-2">
-              <InputGroup label="Content">
-                <TextArea required rows={6} placeholder="Full content of the article..." value={form.content} onChange={e => setForm({...form, content: e.target.value})} />
+      {showAdd && (
+        <Card>
+          <CardHeader title="Add New Event" />
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <InputGroup label="Event Title">
+                <Input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
               </InputGroup>
-            </div>
-            
-            <div className="md:col-span-2 pt-2 flex justify-end">
-               <Button type="submit"><Plus size={18} /> Publish Article</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="grid md:grid-cols-2 gap-4">
+                <InputGroup label="Date">
+                  <Input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Time">
+                  <Input placeholder="e.g. 10:00 AM" required value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />
+                </InputGroup>
+              </div>
+              <InputGroup label="Location">
+                <Input required value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} />
+              </InputGroup>
+              <InputGroup label="Description">
+                <TextArea rows={4} required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+              </InputGroup>
+              <Button type="submit">Save Event</Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card className="border-none shadow-none bg-transparent">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <Card>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-gray-50/50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider font-semibold">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
                 <tr>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Title</th>
-                  <th className="px-6 py-4">Author</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4">Date / Time</th>
+                  <th className="px-6 py-4">Event</th>
+                  <th className="px-6 py-4">Location</th>
+                  <th className="px-6 py-4">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {blogPosts.map(post => (
-                  <tr key={post.id} className="hover:bg-blue-50/30 transition-colors group">
-                    <td className="px-6 py-4 text-gray-500 font-medium font-mono text-xs">{post.date}</td>
-                    <td className="px-6 py-4 font-bold text-gray-800">{post.title}</td>
-                    <td className="px-6 py-4 text-gray-600">{post.author}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button 
-                        onClick={() => deleteBlogPost(post.id)} 
-                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                        title="Delete Post"
-                      >
-                        <Trash2 size={16} />
+                {events.map(event => (
+                  <tr key={event.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="text-gray-800 font-medium">{event.date}</div>
+                      <div className="text-xs text-gray-500">{event.time}</div>
+                    </td>
+                    <td className="px-6 py-4 font-bold text-primary">{event.title}</td>
+                    <td className="px-6 py-4 text-gray-600">{event.location}</td>
+                    <td className="px-6 py-4">
+                      <button onClick={() => deleteEvent(event.id)} className="text-red-500 hover:text-red-700">
+                        <Trash2 size={18} />
                       </button>
                     </td>
                   </tr>
                 ))}
-                {blogPosts.length === 0 && (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-400">
-                      <div className="flex flex-col items-center gap-2">
-                        <PenTool size={40} className="opacity-10" />
-                        <p>No blog posts found.</p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
-        </div>
+        </CardContent>
       </Card>
     </div>
   );
 };
 
 const ManageDownloads: React.FC = () => {
-    // Explicitly casting useSchoolStore() to SchoolContextType to avoid unknown type inference errors
-    const { downloads, addDownload, deleteDownload } = useSchoolStore() as SchoolContextType;
-    const [form, setForm] = useState({ title: '', category: 'General', url: '' });
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filterCategory, setFilterCategory] = useState('All');
-  
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      addDownload(form);
-      setForm({ title: '', category: 'General', url: '' });
-    };
+  const { downloads, addDownload, deleteDownload } = useSchoolStore() as SchoolContextType;
+  const [showAdd, setShowAdd] = useState(false);
+  const [formData, setFormData] = useState({ title: '', category: 'General', url: '' });
 
-    const categories = ['All', 'General', 'Prospectus', 'Syllabus', 'Homework', 'Forms'];
-    
-    const filteredDownloads = downloads.filter(dl => {
-        const matchesSearch = dl.title.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = filterCategory === 'All' || dl.category === filterCategory;
-        return matchesSearch && matchesCategory;
-    });
-
-    const groupedDownloads = filteredDownloads.reduce((acc, dl) => {
-        if (!acc[dl.category]) acc[dl.category] = [];
-        acc[dl.category].push(dl);
-        return acc;
-    }, {} as Record<string, typeof downloads>);
-  
-    return (
-      <div className="space-y-8">
-        {/* Resource Addition Form */}
-        <Card>
-          <CardHeader title="Add New Resource" />
-          <CardContent>
-            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
-              <InputGroup label="Resource Title">
-                <Input required placeholder="Ex: Academic Calendar 2025" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
-              </InputGroup>
-              
-              <InputGroup label="Select Folder / Category">
-                <Select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                  <option>General</option>
-                  <option>Prospectus</option>
-                  <option>Syllabus</option>
-                  <option>Homework</option>
-                  <option>Forms</option>
-                </Select>
-              </InputGroup>
-              
-              <div className="md:col-span-2">
-                <InputGroup label="Download Link / URL">
-                  <Input required placeholder="https://..." value={form.url} onChange={e => setForm({...form, url: e.target.value})} />
-                </InputGroup>
-              </div>
-              
-              <div className="md:col-span-2 pt-2 flex justify-end">
-                 <Button type="submit"><Plus size={18} /> Add to Folder</Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-  
-        {/* Folder Browser & Manager */}
-        <Card className="border-none shadow-none bg-transparent">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="p-4 border-b border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-50/30">
-                <div className="relative w-full md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                    <Input 
-                        placeholder="Search resources..." 
-                        className="pl-10 py-2"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                    />
-                </div>
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                    <Filter size={16} className="text-gray-400" />
-                    <Select 
-                        className="py-2 text-xs w-full md:w-40" 
-                        value={filterCategory} 
-                        onChange={e => setFilterCategory(e.target.value)}
-                    >
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </Select>
-                </div>
-            </div>
-
-            <div className="p-0">
-                {Object.keys(groupedDownloads).length > 0 ? (
-                    <div className="divide-y divide-gray-100">
-                        {Object.entries(groupedDownloads).map(([category, items]) => (
-                            <div key={category} className="bg-white">
-                                <div className="px-6 py-3 bg-gray-50/50 flex items-center justify-between border-b border-gray-100">
-                                    <div className="flex items-center gap-2 text-gray-700">
-                                        <Folder className="text-primary" size={18} />
-                                        <h4 className="font-bold text-sm uppercase tracking-wider">{category}</h4>
-                                        <span className="bg-gray-200 text-gray-500 text-[10px] px-1.5 py-0.5 rounded font-bold">{items.length}</span>
-                                    </div>
-                                </div>
-                                <div className="divide-y divide-gray-50">
-                                    {items.map(dl => (
-                                        <div key={dl.id} className="px-6 py-4 hover:bg-blue-50/30 transition-colors group flex items-center justify-between">
-                                            <div className="flex items-center gap-4">
-                                                <div className="p-2.5 bg-gray-50 text-gray-400 group-hover:text-primary group-hover:bg-blue-50 rounded-lg transition-colors border border-gray-100">
-                                                    <FileText size={18} />
-                                                </div>
-                                                <div className="min-w-0">
-                                                    <p className="font-bold text-gray-800 text-sm truncate">{dl.title}</p>
-                                                    <div className="flex items-center gap-2 mt-0.5">
-                                                        <a href={dl.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-gray-400 hover:text-primary flex items-center gap-1">
-                                                            <ExternalLink size={10} /> Link: {dl.url.substring(0, 30)}...
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button 
-                                                onClick={() => deleteDownload(dl.id)} 
-                                                className="text-gray-300 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
-                                                title="Remove Resource"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="px-6 py-20 text-center text-gray-400">
-                        <div className="flex flex-col items-center gap-3">
-                            <FolderOpen size={48} className="opacity-10" />
-                            <p className="font-medium">No resources found matching your search.</p>
-                            <Button variant="secondary" onClick={() => {setSearchQuery(''); setFilterCategory('All')}}>Clear Filters</Button>
-                        </div>
-                    </div>
-                )}
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-};
-
-const ManageEnquiries: React.FC = () => {
-  // Explicitly casting useSchoolStore() to SchoolContextType to resolve unknown type inference for enquiries.length and enquiries.map
-  const { enquiries, updateEnquiryStatus } = useSchoolStore() as SchoolContextType;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addDownload(formData);
+    setShowAdd(false);
+    setFormData({ title: '', category: 'General', url: '' });
+  };
 
   return (
     <div className="space-y-6">
-      <Card className="border-none shadow-none bg-transparent">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100 bg-white">
-                <h3 className="font-bold text-gray-800 text-lg">Web Enquiries</h3>
-            </div>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Resources & Downloads</h2>
+        <Button onClick={() => setShowAdd(!showAdd)}>
+          {showAdd ? <X size={18} /> : <Plus size={18} />}
+          {showAdd ? 'Cancel' : 'Add New File'}
+        </Button>
+      </div>
+
+      {showAdd && (
+        <Card>
+          <CardHeader title="Add New Resource" />
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <InputGroup label="File Title">
+                <Input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+              </InputGroup>
+              <InputGroup label="Category">
+                <Select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                  <option value="General">General</option>
+                  <option value="Prospectus">Prospectus</option>
+                  <option value="Forms">Forms</option>
+                  <option value="Syllabus">Syllabus</option>
+                  <option value="Homework">Homework</option>
+                </Select>
+              </InputGroup>
+              <InputGroup label="Download URL / File Link">
+                <Input placeholder="https://..." required value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} />
+              </InputGroup>
+              <Button type="submit">Add Resource</Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-gray-50/50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider font-semibold">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
                 <tr>
-                  <th className="px-6 py-4">Applicant</th>
-                  <th className="px-6 py-4">Interested In</th>
-                  <th className="px-6 py-4">Message</th>
-                  <th className="px-6 py-4 text-right">Status</th>
+                  <th className="px-6 py-4">Title</th>
+                  <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Link</th>
+                  <th className="px-6 py-4">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {enquiries.map((e) => (
-                  <tr key={e.id} className="hover:bg-blue-50/30 transition-colors">
+                {downloads.map(dl => (
+                  <tr key={dl.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-bold text-gray-800">{dl.title}</td>
                     <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                                {e.name.charAt(0)}
-                            </div>
-                            <div>
-                                <div className="font-bold text-gray-900">{e.name}</div>
-                                <div className="text-gray-500 text-xs">{e.email}</div>
-                            </div>
-                        </div>
+                      <span className="px-2 py-1 rounded bg-stone-100 text-stone-600 text-[10px] font-bold uppercase">{dl.category}</span>
                     </td>
                     <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-gray-100 rounded text-xs font-semibold text-gray-600">
-                            Class {e.classInterested}
-                        </span>
+                      <a href={dl.url} target="_blank" rel="noreferrer" className="text-primary hover:underline flex items-center gap-1">
+                        <ExternalLink size={14} /> View
+                      </a>
                     </td>
                     <td className="px-6 py-4">
-                        <div className="max-w-xs truncate text-gray-600" title={e.message}>
-                            {e.message}
-                        </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="relative inline-block w-32">
-                          <Select 
-                              className={`py-1.5 pl-2 pr-8 text-xs font-bold border-none shadow-sm ring-1 ring-inset transition-all ${
-                                  e.status === 'New' 
-                                  ? 'bg-red-50 text-red-700 ring-red-200 focus:ring-red-300' 
-                                  : 'bg-green-50 text-green-700 ring-green-200 focus:ring-green-300'
-                              }`}
-                              value={e.status}
-                              onChange={(ev) => updateEnquiryStatus(e.id, ev.target.value as 'New' | 'Contacted')}
-                          >
-                              <option value="New">New</option>
-                              <option value="Contacted">Contacted</option>
-                          </Select>
-                      </div>
+                      <button onClick={() => deleteDownload(dl.id)} className="text-red-500 hover:text-red-700">
+                        <Trash2 size={18} />
+                      </button>
                     </td>
                   </tr>
                 ))}
-                {enquiries.length === 0 && (
-                  <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
-                          <div className="flex flex-col items-center gap-2">
-                          <MessageSquare size={40} className="opacity-10" />
-                          <p>No enquiries received yet.</p>
-                          </div>
-                      </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
-        </div>
+        </CardContent>
       </Card>
     </div>
   );
 };
 
+const ManageBlog: React.FC = () => {
+  const { blogPosts, addBlogPost, deleteBlogPost } = useSchoolStore() as SchoolContextType;
+  const [showAdd, setShowAdd] = useState(false);
+  const [formData, setFormData] = useState({ title: '', author: 'Principal', date: new Date().toISOString().split('T')[0], image: '', excerpt: '', content: '' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addBlogPost(formData);
+    setShowAdd(false);
+    setFormData({ title: '', author: 'Principal', date: new Date().toISOString().split('T')[0], image: '', excerpt: '', content: '' });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Manage Blog</h2>
+        <Button onClick={() => setShowAdd(!showAdd)}>
+          {showAdd ? <X size={18} /> : <Plus size={18} />}
+          {showAdd ? 'Cancel' : 'New Post'}
+        </Button>
+      </div>
+
+      {showAdd && (
+        <Card>
+          <CardHeader title="Create New Blog Post" />
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <InputGroup label="Post Title">
+                  <Input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Author">
+                  <Input required value={formData.author} onChange={e => setFormData({...formData, author: e.target.value})} />
+                </InputGroup>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <InputGroup label="Date">
+                  <Input type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                </InputGroup>
+                <InputGroup label="Featured Image URL">
+                  <Input placeholder="https://..." value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+                </InputGroup>
+              </div>
+              <InputGroup label="Short Excerpt">
+                <Input required value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} />
+              </InputGroup>
+              <InputGroup label="Full Content">
+                <TextArea rows={10} required value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} />
+              </InputGroup>
+              <Button type="submit">Publish Post</Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {blogPosts.map(post => (
+          <Card key={post.id}>
+            <div className="flex gap-4 p-4">
+              <div className="w-24 h-24 rounded-lg bg-stone-100 shrink-0 overflow-hidden">
+                <img src={post.image || 'https://picsum.photos/200/200'} alt="" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-gray-800 line-clamp-1">{post.title}</h3>
+                <p className="text-xs text-gray-400 mt-1">{post.date} | By {post.author}</p>
+                <p className="text-xs text-gray-500 mt-2 line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                <div className="flex justify-end mt-2">
+                  <button onClick={() => deleteBlogPost(post.id)} className="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1">
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const ManagePages: React.FC = () => {
-  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
   const { content, updateContent } = useSchoolStore() as SchoolContextType;
   const [localContent, setLocalContent] = useState(content);
   const [isSaved, setIsSaved] = useState(false);
@@ -733,71 +556,98 @@ const ManagePages: React.FC = () => {
   return (
     <div className="space-y-8 max-w-5xl">
       <Card>
-        <CardHeader title="About Us Details" />
+        <CardHeader title="Website Text Content" />
         <CardContent className="space-y-6">
-            <InputGroup label="Main About Text">
-                <TextArea 
-                  rows={6} 
-                  value={localContent.aboutText} 
-                  onChange={e => setLocalContent({...localContent, aboutText: e.target.value})} 
-                  placeholder="Describe the school..."
-                />
+          <InputGroup label="About Us Text">
+            <TextArea rows={5} value={localContent.aboutText} onChange={e => setLocalContent({...localContent, aboutText: e.target.value})} />
+          </InputGroup>
+          <div className="grid md:grid-cols-2 gap-6">
+            <InputGroup label="Vision Statement">
+              <TextArea rows={4} value={localContent.visionText} onChange={e => setLocalContent({...localContent, visionText: e.target.value})} />
             </InputGroup>
-            <div className="grid md:grid-cols-2 gap-6">
-                <InputGroup label="Our Vision">
-                    <TextArea 
-                      rows={4} 
-                      value={localContent.visionText} 
-                      onChange={e => setLocalContent({...localContent, visionText: e.target.value})}
-                      placeholder="School vision..."
-                    />
-                </InputGroup>
-                <InputGroup label="Our Mission">
-                    <TextArea 
-                      rows={4} 
-                      value={localContent.missionText} 
-                      onChange={e => setLocalContent({...localContent, missionText: e.target.value})}
-                      placeholder="School mission..."
-                    />
-                </InputGroup>
-            </div>
+            <InputGroup label="Mission Statement">
+              <TextArea rows={4} value={localContent.missionText} onChange={e => setLocalContent({...localContent, missionText: e.target.value})} />
+            </InputGroup>
+          </div>
+          <InputGroup label="Academics Page Text">
+            <TextArea rows={4} value={localContent.academicsText} onChange={e => setLocalContent({...localContent, academicsText: e.target.value})} />
+          </InputGroup>
+          <InputGroup label="Facilities Page Text">
+            <TextArea rows={4} value={localContent.facilitiesText} onChange={e => setLocalContent({...localContent, facilitiesText: e.target.value})} />
+          </InputGroup>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader title="Section Descriptions" />
-        <CardContent className="space-y-6">
-            <InputGroup label="Academics Section Intro">
-                <TextArea 
-                  rows={3} 
-                  value={localContent.academicsText} 
-                  onChange={e => setLocalContent({...localContent, academicsText: e.target.value})}
-                  placeholder="Brief intro for academics section..."
-                />
-            </InputGroup>
-            <InputGroup label="Facilities Section Intro">
-                <TextArea 
-                  rows={3} 
-                  value={localContent.facilitiesText} 
-                  onChange={e => setLocalContent({...localContent, facilitiesText: e.target.value})}
-                  placeholder="Brief intro for facilities section..."
-                />
-            </InputGroup>
-        </CardContent>
-      </Card>
-
       <div className="flex justify-end pt-2 pb-8">
-        <Button onClick={handleSave} className="px-8 py-3 text-base shadow-xl shadow-blue-900/20">
-            {isSaved ? <CheckCircle size={20} /> : <CheckCircle size={20} />} 
-            {isSaved ? "Saved Successfully!" : "Save Content Changes"}
+        <Button onClick={handleSave}>
+          {isSaved ? <CheckCircle size={18} /> : <CheckCircle size={18} />} 
+          {isSaved ? "Saved Content!" : "Update Website Content"}
         </Button>
       </div>
     </div>
   );
 };
 
+const ManageEnquiries: React.FC = () => {
+  const { enquiries, updateEnquiryStatus } = useSchoolStore() as SchoolContextType;
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-800">Student Enquiries</h2>
+      <Card>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-wider">
+                <tr>
+                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4">Student Name</th>
+                  <th className="px-6 py-4">Class</th>
+                  <th className="px-6 py-4">Contact Details</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {enquiries.map(enquiry => (
+                  <tr key={enquiry.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">{enquiry.date}</td>
+                    <td className="px-6 py-4 font-bold text-gray-800">{enquiry.name}</td>
+                    <td className="px-6 py-4">{enquiry.classInterested}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span>{enquiry.phone}</span>
+                        <span className="text-xs text-gray-400">{enquiry.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${enquiry.status === 'New' ? 'bg-red-50 text-red-600 ring-1 ring-red-100' : 'bg-green-50 text-green-600 ring-1 ring-green-100'}`}>
+                        {enquiry.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {enquiry.status === 'New' && (
+                        <Button variant="secondary" onClick={() => updateEnquiryStatus(enquiry.id, 'Contacted')} className="text-[10px] py-1.5 px-3">
+                          Mark Contacted
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {enquiries.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400 italic">No student enquiries received yet.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const ManageSettings: React.FC = () => {
-  // Explicitly casting useSchoolStore() to SchoolContextType to resolve potential unknown type inference issues
   const { settings, updateSettings } = useSchoolStore() as SchoolContextType;
   const [localSettings, setLocalSettings] = useState(settings);
   const [isSaved, setIsSaved] = useState(false);
@@ -835,23 +685,6 @@ const ManageSettings: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader title="Social Media Connections" />
-        <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-                <InputGroup label="Facebook URL">
-                    <Input placeholder="https://facebook.com/..." value={localSettings.facebook} onChange={e => setLocalSettings({...localSettings, facebook: e.target.value})} />
-                </InputGroup>
-                <InputGroup label="Instagram URL">
-                    <Input placeholder="https://instagram.com/..." value={localSettings.instagram} onChange={e => setLocalSettings({...localSettings, instagram: e.target.value})} />
-                </InputGroup>
-                <InputGroup label="Youtube URL">
-                    <Input placeholder="https://youtube.com/..." value={localSettings.youtube} onChange={e => setLocalSettings({...localSettings, youtube: e.target.value})} />
-                </InputGroup>
-            </div>
-        </CardContent>
-      </Card>
-
       <div className="flex justify-end pt-2 pb-8">
         <Button onClick={handleSave} className="px-8 py-3 text-base shadow-xl shadow-blue-900/20">
             {isSaved ? <CheckCircle size={20} /> : <CheckCircle size={20} />} 
@@ -861,8 +694,6 @@ const ManageSettings: React.FC = () => {
     </div>
   );
 };
-
-// --- Main Admin Layout ---
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -887,22 +718,16 @@ const AdminDashboard: React.FC = () => {
   const currentPathLabel = navItems.find(n => n.path === location.pathname)?.label || 'Dashboard';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex font-sans text-gray-800 selection:bg-primary/20">
+    <div className="min-h-screen bg-stone-50 flex font-sans text-gray-800 selection:bg-primary/20">
       {/* Sidebar */}
-      <aside className="w-72 bg-[#0f172a] text-white flex flex-col fixed h-full z-30 shadow-2xl transition-all duration-300">
-        <div className="h-24 flex items-center px-6 border-b border-gray-800 bg-[#020617]">
-          <img src="/logo.png" alt="Logo" className="w-12 h-12 rounded-lg object-contain bg-white/5 p-1 mr-4 shadow-lg shadow-blue-900/40" />
-          <div>
-            <h2 className="text-base font-bold tracking-tight text-white uppercase">Admin Portal</h2>
-            <div className="flex items-center gap-1.5 mt-0.5">
-               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Online</p>
-            </div>
-          </div>
+      <aside className="w-72 bg-[#020617] text-white flex flex-col fixed h-full z-30 shadow-2xl transition-all duration-300">
+        <div className="h-32 flex flex-col items-center justify-center border-b border-white/10 bg-black/20">
+          <Logo />
+          <h2 className="text-sm font-bold tracking-[0.3em] text-secondary uppercase">Admin Portal</h2>
         </div>
 
         <div className="flex-1 overflow-y-auto py-8 px-4 space-y-1">
-          <div className="px-4 mb-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Main Menu</div>
+          <div className="px-4 mb-4 text-[10px] font-bold text-stone-500 uppercase tracking-[0.2em]">Navigation</div>
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             return (
@@ -911,63 +736,59 @@ const AdminDashboard: React.FC = () => {
                 to={item.path} 
                 className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden
                   ${isActive 
-                    ? 'bg-primary text-white shadow-lg shadow-blue-900/30' 
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                    ? 'bg-secondary text-primary shadow-lg shadow-black/30' 
+                    : 'text-stone-400 hover:bg-white/5 hover:text-white'
                   }`}
               >
-                {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400"></div>}
-                <item.icon size={20} className={`transition-colors ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-white'}`} />
+                {isActive && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>}
+                <item.icon size={18} className={`transition-colors ${isActive ? 'text-primary' : 'text-stone-600 group-hover:text-white'}`} />
                 <span className="relative z-10">{item.label}</span>
               </Link>
             );
           })}
         </div>
 
-        <div className="p-4 border-t border-gray-800 bg-[#020617]">
-          <Link to="/" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all mb-2 group">
-             <div className="p-1.5 rounded-md border border-gray-700 group-hover:border-gray-500 transition-colors"><ChevronRight size={14} /></div>
-             Visit Public Site
+        <div className="p-4 border-t border-white/10 bg-black/40">
+          <Link to="/" className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-stone-500 hover:text-secondary transition-all mb-2 group">
+             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+             Public Website
           </Link>
-          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all">
-            <LogOut size={20} /> Logout
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full text-sm font-bold text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
+            <LogOut size={18} /> Sign Out
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 ml-72">
-        {/* Top Header */}
-        <header className="h-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 sticky top-0 z-20 px-8 flex justify-between items-center transition-all">
+        <header className="h-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-stone-200 sticky top-0 z-20 px-8 flex justify-between items-center transition-all">
            <div>
-               <h1 className="text-2xl font-bold text-gray-800 tracking-tight">{currentPathLabel}</h1>
-               <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                  <span className="hover:text-primary cursor-pointer transition-colors">Admin</span>
+               <h1 className="text-xl font-bold text-primary tracking-tight">{currentPathLabel}</h1>
+               <div className="flex items-center gap-2 text-[10px] text-stone-400 mt-0.5 uppercase tracking-widest font-bold">
+                  <span>Portal</span>
                   <ChevronRight size={10} />
-                  <span className="font-medium text-gray-700">{currentPathLabel}</span>
+                  <span className="text-stone-600">{currentPathLabel}</span>
                </div>
            </div>
 
            <div className="flex items-center gap-6">
-             <div className="relative group cursor-pointer">
-                <div className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <Bell size={20} className="text-gray-500 group-hover:text-primary transition-colors" />
-                </div>
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+             <div className="p-2 rounded-full hover:bg-stone-100 transition-colors relative cursor-pointer">
+                <Bell size={20} className="text-stone-500" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full border-2 border-white"></span>
              </div>
-             <div className="h-8 w-px bg-gray-200"></div>
-             <div className="flex items-center gap-3 cursor-pointer p-1.5 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+             <div className="h-8 w-px bg-stone-200"></div>
+             <div className="flex items-center gap-3 cursor-pointer">
                <div className="text-right hidden sm:block">
-                 <div className="text-sm font-bold text-gray-800">Administrator</div>
-                 <div className="text-xs text-gray-500">Super User</div>
+                 <div className="text-xs font-bold text-primary uppercase tracking-tighter">Administrator</div>
+                 <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Live Session</div>
                </div>
-               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-blue-500 text-white flex items-center justify-center font-bold shadow-md ring-2 ring-white">
+               <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center font-extrabold shadow-sm border-2 border-white">
                  A
                </div>
              </div>
            </div>
         </header>
 
-        {/* Scrollable Content Area */}
         <div className="p-8 max-w-7xl mx-auto pb-20">
           <Routes>
             <Route index element={<DashboardHome />} />

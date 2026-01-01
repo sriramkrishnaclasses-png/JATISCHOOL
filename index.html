@@ -1,20 +1,40 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jati International School</title>
+    <!-- Importing Google Fonts for a more traditional look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              primary: '#1e3a8a', // Royal Blue
-              secondary: '#f97316', // Orange
+              primary: '#0e382c', // Deep Forest Green from logo
+              secondary: '#d4b265', // Burnished Gold from logo
+              accent: '#5e0d15', // Heritage Maroon from logo
+              cream: '#fcf6e3', // Soft Cream background
             },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+            animation: {
+              'marquee': 'marquee 25s linear infinite',
+              'fadeIn': 'fadeIn 1s ease-out forwards',
+            },
+            keyframes: {
+              marquee: {
+                '0%': { transform: 'translateX(100%)' },
+                '100%': { transform: 'translateX(-100%)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
             }
           }
         }

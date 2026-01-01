@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { 
   SchoolContextType, Notice, Event, GalleryItem, DownloadItem, 
@@ -6,7 +7,7 @@ import {
 
 const defaultSettings: SchoolSettings = {
   name: "Jati International School",
-  tagline: "Nurturing Global Minds with Local Values",
+  tagline: "Realisation of Self",
   address: "Salipur, Cuttack, Odisha",
   phone: "9937033007",
   email: "info@jatiinternationalschool.com",
@@ -16,11 +17,11 @@ const defaultSettings: SchoolSettings = {
 };
 
 const defaultContent: SiteContent = {
-  aboutText: "Jati International School is committed to providing a holistic education that fosters intellectual, emotional, and physical growth. We believe in nurturing global citizens who remain rooted in their cultural values.",
-  visionText: "To create a learning environment where every child discovers their potential and contributes positively to society.",
-  missionText: "To provide world-class education with a focus on discipline, integrity, and innovation.",
-  academicsText: "Our academic curriculum is designed to challenge students while providing necessary support. We follow the CBSE curriculum with a focus on activity-based learning.",
-  facilitiesText: "We provide state-of-the-art facilities including smart classrooms, well-equipped labs, and extensive sports grounds to ensure all-round development."
+  aboutText: "Jati International School is committed to providing a holistic education that fosters intellectual, emotional, and physical growth. Our institution is built on the foundation of character-building and discipline, guiding every child toward their own realization of potential.",
+  visionText: "To create a learning environment where every child discovers their inner potential and contributes positively to society with self-awareness and integrity.",
+  missionText: "To provide world-class education rooted in timeless values, focusing on discipline, innovation, and the holistic development of every learner.",
+  academicsText: "Our academic curriculum is designed to challenge students while providing necessary support. We follow a CBSE-aligned framework with a deep focus on experiential and value-based learning.",
+  facilitiesText: "We provide state-of-the-art facilities including smart classrooms, well-equipped science and computer labs, and extensive sports grounds to ensure all-round student development."
 };
 
 const initialNotices: Notice[] = [
@@ -79,7 +80,7 @@ const initialBlogPosts: BlogPost[] = [
   {
     id: '3',
     title: 'Tips for Exam Preparation',
-    author: 'Senior Counselor',
+    author: 'Counselor',
     date: '2025-03-01',
     image: 'https://picsum.photos/800/400?random=102',
     excerpt: 'As the board exams approach, here are some essential tips to help students manage stress and study effectively.',
